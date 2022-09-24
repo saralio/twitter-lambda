@@ -1,0 +1,123 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+  serverless-framework: circleci/serverless-framework@2.0
+  python: circleci/python@2.0.3
+
+commands:
+  check_env_var:
+    description: checking environment variables
+    steps:
+      - run: |
+          echo checking environment variables
+          echo MY_ENV is $MY_ENV
+          echo MY_REGION is $MY_REGION
+          echo BRANCH_NAME is $BRANCH_NAME
+  sync_reqs_file:
+    description: synchronize develop requirements files with master and staging
+    steps:
+      - run: |
+          cat requirements/requirements-develop.txt > requirements/requirements-master.txt
+          cat requirements/requirements-develop.txt > requirements/requirements-stg.txt
+          sed -i '/^git+https/ s/develop/master/g' requirements/requirements-master.txt
+  setup_chromedriver:
+    description: download chromedriver
+    steps:
+      - run: |
+          mkdir -p bin
+          mkdir -p tmp
+          curl -SL https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip > chromedriver.zip
+          unzip chromedriver.zip -d bin/
+          chmod +x ./bin/chromedriver
+          curl -SL https://github.com/adieuadieu/serverless-chrome/releases/download/v1.0.0-29/stable-headless-chromium-amazonlinux-2017-03.zip > headless-chromium.zip
+          unzip headless-chromium.zip -d bin/
+  setup_serverless:
+    description: setup serverless
+    steps:
+      - node/install:
+          node-version: "16.13"
+      - run: node --version
+      - run: npm ci
+      - run:
+          name: install serverless framework
+          command: npm install -g serverless
+  install_plugin:
+    description: install serverless plugin
+    steps:
+      - run:
+          name: install serverless plugins
+          command: 'sls plugin install --name serverless-python-requirements --stage=$MY_ENV'
+  authenticate_serverless:
+    description: authenticate serverles
+    steps:
+      - run:
+          name: authenticate serverless
+          command: 'sls config credentials --provider aws --key $AWS_ACCESS_KEY_ID --secret $AWS_SECRET_ACCESS_KEY'
+  build_pkg:
+    description: build serverless package
+    steps:
+      - run:
+          name: build lambda package
+          command: 'sls package --package lambda_pkg --stage=$MY_ENV --verbose'
+  deploy_pkg:
+    description: deploy lambda package
+    steps:
+      - run: 'sls deploy --package ./lambda_pkg --stage=$MY_ENV --verbose'
+
+executors:
+  base-image:
+    machine:
+      image: ubuntu-2004:current
+    resource_class: medium
+
+jobs:
+  master:
+    executor: base-image
+    environment:
+      MY_ENV: prod
+      MY_REGION: us-west-2
+    steps:
+      - checkout
+      - sync_reqs_file
+      - setup_chromedriver
+      - setup_serverless
+      - check_env_var
+      - install_plugin
+      - authenticate_serverless
+      - build_pkg
+      - deploy_pkg
+  feature:
+    executor: base-image
+    environment:
+      MY_ENV: test
+      MY_REGION: ap-south-1
+    steps:
+      - checkout
+      - sync_reqs_file
+      - setup_chromedriver
+      - setup_serverless
+      - check_env_var
+      - install_plugin
+      - authenticate_serverless
+      - build_pkg
+
+workflows:
+  serverless:
+    jobs:
+      - master:
+          context:
+            - aws
+            - twitter
+          filters:
+            branches:
+              only: master
+      - feature:
+          context: 
+            - aws
+            - twitter
+          filters:
+            branches:
+              ignore:
+                - develop
+                - master
