@@ -4,7 +4,6 @@ frameworkVersion: '3'
 
 plugins:
   - serverless-python-requirements
-
 custom:
   pythonRequirements:
     slim: true
@@ -26,15 +25,15 @@ package:
 provider:
   name: aws
   runtime: python3.8
-  env: ${env:MY_ENV}
+  stage: ${env:MY_ENV}
   region: ${env:MY_REGION}
   iam:
     role:
       statements:
         - Effect: Allow
           Action:
-            - events: "*"
-            - dynamodb: "*"
+            - events:*
+            - dynamodb:*
           Resource: "*"
 
 functions:
@@ -43,7 +42,7 @@ functions:
     events: 
       - schedule: cron(30 12 * * ? *)
 
-    maximumRetryAttempt: 1
+    maximumRetryAttempts: 1
     memorySize: 512
     environment: 
       TWITTER_API_SECRET: ${env:TWITTER_API_SECRET}

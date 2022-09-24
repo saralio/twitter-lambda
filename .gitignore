@@ -21,3 +21,4 @@ var/
 configs.ini
 bin
 tmp
+node_modules
