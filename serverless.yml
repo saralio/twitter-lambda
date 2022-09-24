@@ -26,7 +26,7 @@ package:
 
 provider:
   name: aws
-  runtime: python3.6
+  runtime: python3.7
   stage: ${env:MY_ENV}
   region: ${env:MY_REGION}
   iam:
