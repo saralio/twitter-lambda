@@ -20,6 +20,7 @@ package:
     - 'archive/**'
     - 'tmp/**'
     - '.gitignore'
+    - 'env'
 
 
 provider:
