@@ -90,10 +90,6 @@ jobs:
       - authenticate_serverless
       - build_pkg
       - deploy_pkg
-    post-steps:
-      - jira/notify:
-          environment_type: Production
-          job_type: deployment
   feature:
     executor: base-image
     environment:
@@ -119,6 +115,10 @@ workflows:
           filters:
             branches:
               only: master
+          post-steps:
+            - jira/notify:
+                environment_type: Production
+                job_type: deployment
       - feature:
           context: 
             - aws
