@@ -1,4 +1,3 @@
-# handles fetching question from dynamdb and maintains unique question are posted
 try:
     import unzip_requirements #type ignore
 except:
