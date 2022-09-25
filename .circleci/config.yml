@@ -117,7 +117,7 @@ workflows:
               only: master
           post-steps:
             - jira/notify:
-                environment_type: Production
+                environment_type: production
                 job_type: deployment
       - feature:
           context: 
