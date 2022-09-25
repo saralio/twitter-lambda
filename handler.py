@@ -99,17 +99,24 @@ def hello(event, context):
             print(f'tweet posted with id {tweet.data["id"]}')
             tweeted_id = tweet.data['id']
         elif len(tweets_to_post) > 1 and code_media_count <= 4:
-            reply_id = ""
+            reply_id = None
             for t in tweets_to_post:
                 sno = sno_from_text(t)
                 code_m_ids = [x['media_id'] for x in code_media_ids if x['sno'] in sno]
 
-                tweet = twitter.create_tweet(
-                    text=t, 
-                    media_ids = code_m_ids,
-                    in_reply_to_tweet_id=reply_id
-                )
-                reply_id = tweet.data['id']
+                if reply_id is None:
+                    tweet = twitter.create_tweet(
+                        text=t, 
+                        media_ids = code_m_ids,
+                    )
+                    reply_id = tweet.data['id']
+                else:
+                    tweet = twitter.create_tweet(
+                        text=t, 
+                        media_ids = code_m_ids,
+                        in_reply_to_tweet_id=reply_id
+                    )
+                    reply_id = tweet.data['id']
                 print(f'tweet posted with id {tweet.data["id"]}')
 
             tweeted_id = tweet.data['id']
@@ -131,26 +138,39 @@ def hello(event, context):
             tweeted_id = tweet.data['id']
 
         elif len(tweets_to_post) > 1 and code_media_count > 4:
-            reply_id = ""
+            reply_id = None
             for t in tweets_to_post:
                 sno = sno_from_text(t)
                 code_m_ids = [x['media_id'] for x in code_media_ids if x['sno'] in sno]
 
+                if reply_id is None:
+                    tweet = twitter.create_tweet(
+                        text=t, 
+                        media_ids = code_m_ids, 
+                    )
+                    reply_id = tweet.data['id']
+                else:
+                    tweet = twitter.create_tweet(
+                        text=t, 
+                        media_ids = code_m_ids, 
+                        in_reply_to_tweet_id=reply_id
+                    )
+                    reply_id = tweet.data['id']
+            tweeted_id = tweet.data['id']
+    else:
+        reply_id = None
+        for t in tweets_to_post:
+            if reply_id is None:
                 tweet = twitter.create_tweet(
-                    text=t, 
-                    media_ids = code_m_ids, 
+                    text=t
+                )
+                reply_id = tweet.data['id']
+            else:
+                tweet = twitter.create_tweet(
+                    text=t,
                     in_reply_to_tweet_id=reply_id
                 )
                 reply_id = tweet.data['id']
-            tweeted_id = tweet.data['id']
-    else:
-        reply_id = ""
-        for t in tweets_to_post:
-            tweet = twitter.create_tweet(
-                text=t,
-                in_reply_to_tweet_id=reply_id
-            )
-            reply_id = tweet.data['id']
         
         tweeted_id = tweet.data['id']
     
