@@ -6,7 +6,7 @@ plugins:
   - serverless-python-requirements
 custom:
   pythonRequirements:
-    slim: true
+    slim: false
     dockerizePip: true 
     useDownloadCache: false
     useStaticCache: false
@@ -26,7 +26,7 @@ package:
 
 provider:
   name: aws
-  runtime: python3.7
+  runtime: python3.8
   stage: ${env:MY_ENV}
   region: ${env:MY_REGION}
   iam:

@@ -1,10 +1,13 @@
+try:
+    import unzip_requirements #type ignore
+except:
+    pass
 from typing import Union
 import re
 import tweepy
 import urllib.parse
 import os
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 
 
 def code(text: str, pattern: str = "(?<=```)(.*?)(?=```)") -> dict:

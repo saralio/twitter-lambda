@@ -1,4 +1,8 @@
 # handles fetching question from dynamdb and maintains unique question are posted
+try:
+    import unzip_requirements #type ignore
+except:
+    pass
 from saral_utils.extractor.dynamo import DynamoDB
 from saral_utils.extractor.dynamo_queries import DynamoQueries
 import saral_utils.utils.qna as qna

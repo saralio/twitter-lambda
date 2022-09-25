@@ -1,3 +1,8 @@
+try:
+    import unzip_requirements #type ignore
+except:
+    pass
+
 import os
 from PIL import Image
 from io import BytesIO
