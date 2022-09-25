@@ -87,58 +87,71 @@ def hello(event, context):
     tweets_to_post = text_to_tweets(text=text_wo_code, hashtags=['RStats', 'DataScience'] )
 
     code_media_count = len(code_media_ids)
+    que_id = unique_question['question_id']
+    print(f'question selected: {que_id}')
 
-    if len(tweets_to_post) == 1 and code_media_count <= 4:
-        tweet = twitter.create_tweet(
-            text=tweets_to_post[0],
-            media_ids = [c['media_id'] for c in code_media_ids]
-        )
-        print(f'tweet posted with id {tweet.data["id"]}')
-        tweeted_id = tweet.data['id']
-    elif len(tweets_to_post) > 1 and code_media_count <= 4:
-        reply_id = ""
-        for t in tweets_to_post:
-            sno = sno_from_text(t)
-            code_m_ids = [x['media_id'] for x in code_media_ids if x['sno'] in sno]
-
+    if code_media_count > 0:
+        if len(tweets_to_post) == 1 and code_media_count <= 4:
             tweet = twitter.create_tweet(
-                text=t, 
-                media_ids = code_m_ids,
-                in_reply_to_tweet_id=reply_id
+                text=tweets_to_post[0],
+                media_ids = [c['media_id'] for c in code_media_ids]
             )
-            reply_id = tweet.data['id']
             print(f'tweet posted with id {tweet.data["id"]}')
+            tweeted_id = tweet.data['id']
+        elif len(tweets_to_post) > 1 and code_media_count <= 4:
+            reply_id = ""
+            for t in tweets_to_post:
+                sno = sno_from_text(t)
+                code_m_ids = [x['media_id'] for x in code_media_ids if x['sno'] in sno]
 
-        tweeted_id = tweet.data['id']
-    
-    elif len(tweets_to_post) == 1 and code_media_count > 4:
-        tweet = twitter.create_tweet(
-            text=tweets_to_post[0],
-            media_ids = code_media_ids[0:4]
-        )
-        reply_id = tweet.data['id'] 
+                tweet = twitter.create_tweet(
+                    text=t, 
+                    media_ids = code_m_ids,
+                    in_reply_to_tweet_id=reply_id
+                )
+                reply_id = tweet.data['id']
+                print(f'tweet posted with id {tweet.data["id"]}')
 
-        for i in range(4, len(code_media_ids) ,4):
+            tweeted_id = tweet.data['id']
+        
+        elif len(tweets_to_post) == 1 and code_media_count > 4:
             tweet = twitter.create_tweet(
-                media_ids = code_media_ids[i:i+4],
-                in_reply_to_tweet_id=reply_id
+                text=tweets_to_post[0],
+                media_ids = code_media_ids[0:4]
             )
-            reply_id = tweet.data['id']
+            reply_id = tweet.data['id'] 
 
-        tweeted_id = tweet.data['id']
+            for i in range(4, len(code_media_ids) ,4):
+                tweet = twitter.create_tweet(
+                    media_ids = code_media_ids[i:i+4],
+                    in_reply_to_tweet_id=reply_id
+                )
+                reply_id = tweet.data['id']
 
-    elif len(tweets_to_post) > 1 and code_media_count > 4:
+            tweeted_id = tweet.data['id']
+
+        elif len(tweets_to_post) > 1 and code_media_count > 4:
+            reply_id = ""
+            for t in tweets_to_post:
+                sno = sno_from_text(t)
+                code_m_ids = [x['media_id'] for x in code_media_ids if x['sno'] in sno]
+
+                tweet = twitter.create_tweet(
+                    text=t, 
+                    media_ids = code_m_ids, 
+                    in_reply_to_tweet_id=reply_id
+                )
+                reply_id = tweet.data['id']
+            tweeted_id = tweet.data['id']
+    else:
         reply_id = ""
         for t in tweets_to_post:
-            sno = sno_from_text(t)
-            code_m_ids = [x['media_id'] for x in code_media_ids if x['sno'] in sno]
-
             tweet = twitter.create_tweet(
-                text=t, 
-                media_ids = code_m_ids, 
+                text=t,
                 in_reply_to_tweet_id=reply_id
             )
             reply_id = tweet.data['id']
+        
         tweeted_id = tweet.data['id']
     
     # tweet options to last tweeted post
@@ -147,7 +160,6 @@ def hello(event, context):
         option_text = str(i+1) + ". " + option['text'] + "\n"
         options_text.append(option_text)
 
-    que_id = unique_question['question_id']
     answer_link = create_env_api_url(url=f'answer.saral.club/qna/{que_id}')
     option_tweets_to_post = [f"Options:\n(Answer at: {answer_link}\n"]
     for opt in options_text:
