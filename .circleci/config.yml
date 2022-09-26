@@ -97,6 +97,7 @@ jobs:
     environment:
       MY_ENV: test
       MY_REGION: ap-south-1
+      BRANCH_NAME: develop
     steps:
       - checkout
       - sync_reqs_file
