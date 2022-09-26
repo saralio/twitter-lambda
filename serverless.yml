@@ -11,7 +11,6 @@ custom:
     useDownloadCache: false
     useStaticCache: false
     fileName: ./requirements/requirements-${env:BRANCH_NAME}.txt
-    zip: true
 
 package:
   individually: true
