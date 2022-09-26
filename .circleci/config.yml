@@ -35,8 +35,7 @@ commands:
           unzip headless-chromium.zip -d bin/
           rm headless-chromium.zip chromedriver.zip
           sudo apt-get update
-          sudo apt install -y libgconf-2-4
-          sudo apt install -y libORBit
+          sudo apt-get install -y libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1
   setup_serverless:
     description: setup serverless
     steps:
