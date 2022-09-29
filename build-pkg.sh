@@ -2,6 +2,7 @@
 rm -rf pkg
 rm -f build.zip
 mkdir pkg
+chown -R $USER:$USER pkg
 cp -r bin lib handler.py question.py utils.py requirements.txt pkg/
 # cp -r handler.py question.py utils.py requirements.txt pkg/
 cd pkg
