@@ -1,7 +1,3 @@
-try:
-    import unzip_requirements #type ignore
-except:
-    pass
 from typing import Union
 import re
 import tweepy
@@ -113,7 +109,7 @@ class WebDriverWrapper:
         chrome_options.binary_location = os.getcwd() + "/bin/headless-chromium"
         print(os.getcwd())
 
-        self.driver = webdriver.Chrome(
+        self.browser = webdriver.Chrome(
             chrome_options=chrome_options,
             executable_path=os.getcwd() + '/bin/chromedriver'
         )
