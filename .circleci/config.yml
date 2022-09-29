@@ -15,27 +15,17 @@ commands:
           echo MY_ENV is $MY_ENV
           echo MY_REGION is $MY_REGION
           echo BRANCH_NAME is $BRANCH_NAME
-  sync_reqs_file:
-    description: synchronize develop requirements files with master and staging
-    steps:
-      - run: |
-          cat requirements/requirements-develop.txt > requirements/requirements-master.txt
-          cat requirements/requirements-develop.txt > requirements/requirements-stg.txt
-          sed -i '/^git+https/ s/develop/master/g' requirements/requirements-master.txt
   setup_chromedriver:
     description: download chromedriver
     steps:
       - run: |
           mkdir -p bin
-          mkdir -p tmp
           curl -SL https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip > chromedriver.zip
           unzip chromedriver.zip -d bin/
           chmod +x ./bin/chromedriver
           curl -SL https://github.com/adieuadieu/serverless-chrome/releases/download/v1.0.0-29/stable-headless-chromium-amazonlinux-2017-03.zip > headless-chromium.zip
           unzip headless-chromium.zip -d bin/
           rm headless-chromium.zip chromedriver.zip
-          chmod +x ./lib/libgconf-2.so.4
-          chmod +x ./lib/libORBit-2.so.0
   setup_serverless:
     description: setup serverless
     steps:
@@ -46,12 +36,6 @@ commands:
       - run:
           name: install serverless framework
           command: npm install -g serverless
-  install_plugin:
-    description: install serverless plugin
-    steps:
-      - run:
-          name: install serverless plugins
-          command: 'sls plugin install --name serverless-python-requirements --stage=$MY_ENV'
   authenticate_serverless:
     description: authenticate serverles
     steps:
@@ -61,13 +45,12 @@ commands:
   build_pkg:
     description: build serverless package
     steps:
-      - run:
-          name: build lambda package
-          command: 'sls package --package lambda_pkg --stage=$MY_ENV --verbose'
+      - run: |
+          source build-pkg.sh
   deploy_pkg:
     description: deploy lambda package
     steps:
-      - run: 'sls deploy --package ./lambda_pkg --stage=$MY_ENV --verbose'
+      - run: 'sls deploy --stage=$MY_ENV --verbose'
 
 executors:
   base-image:
@@ -84,11 +67,9 @@ jobs:
       BRANCH_NAME: master
     steps:
       - checkout
-      - sync_reqs_file
       - setup_chromedriver
       - setup_serverless
       - check_env_var
-      - install_plugin
       - authenticate_serverless
       - build_pkg
       - deploy_pkg
@@ -100,11 +81,9 @@ jobs:
       BRANCH_NAME: develop
     steps:
       - checkout
-      - sync_reqs_file
       - setup_chromedriver
       - setup_serverless
       - check_env_var
-      - install_plugin
       - authenticate_serverless
       - build_pkg
 

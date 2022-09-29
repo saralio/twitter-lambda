@@ -1,8 +1,3 @@
-try:
-    import unzip_requirements #type ignore
-except:
-    pass
-
 import os
 from PIL import Image
 from io import BytesIO
@@ -20,6 +15,10 @@ def hello(event, context):
     if trigger is None:
         trigger = 'R'
 
+    start_date = event.get('start_date', None)
+    if start_date is None:
+        start_date = '2022-09-22'
+
     twitter = Twitter().client_v1
     twitter_v2 = Twitter().client_v2
 
@@ -30,7 +29,7 @@ def hello(event, context):
     queries = DynamoQueries()
 
     # get question
-    que = Question(que_db=db, queries=queries, language=trigger)
+    que = Question(que_db=db, queries=queries, language=trigger, start_date=start_date)
     unique_question = que.get_unique_que()
 
     # convert question text to tweet text
@@ -45,7 +44,8 @@ def hello(event, context):
     code_media_ids = []
     if code_info:
         for info in code_info:
-            driver = WebDriverWrapper().driver 
+            driver = WebDriverWrapper().browser
+            print(f'web driver created')
             code = info['code']
             language = info['language']
             sno = info['sno']
@@ -53,9 +53,11 @@ def hello(event, context):
             # convert code to images and download to temp
             # hit the carbon site to download the image
             ur = CarbonUrl(code, language).url
+            print(f'fetching data from url: {ur}')
             driver.get(ur)
+            print(f'url fetched')
+            print(f'creating image')
             element = driver.find_element_by_id("export-container")
-
             location = element.location 
             size = element.size 
             full_screenshot = driver.get_screenshot_as_png()
@@ -68,8 +70,9 @@ def hello(event, context):
             bottom = location['y'] + size['height']
 
             im = im.crop((left, top, right, bottom))
-            path = os.getcwd() + '/tmp/' + str(sno) + '.png'
+            path = '/tmp/' + str(sno) + '.png'
             im.save(path)
+            print(f'image saved at path: {path}')
 
             media_id = twitter_v2.media_upload(path).media_id_string
             twitter_v2.create_media_metadata(media_id, 'Image ' + str(sno))

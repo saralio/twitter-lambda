@@ -1,23 +1,19 @@
-try:
-    import unzip_requirements #type ignore
-except:
-    pass
 from saral_utils.extractor.dynamo import DynamoDB
 from saral_utils.extractor.dynamo_queries import DynamoQueries
 import saral_utils.utils.qna as qna
-from typing import Tuple, Dict 
-import pandas as pd
+from typing import Tuple, Dict, Union
 import warnings
 from datetime import datetime
 
 
 class Question:
 
-    def __init__(self, que_db: DynamoDB, queries: DynamoQueries, language: str):
+    def __init__(self, que_db: DynamoDB, queries: DynamoQueries, language: str, start_date: Union[str, None] = None):
 
         self.que_db = que_db
         self.queries = queries
         self.language = language.lower()
+        self.start_date = start_date if start_date else '2022-09-22'
 
     def get_queries(self) -> Tuple: 
         if self.language in ['r']:
@@ -82,14 +78,10 @@ class Question:
         ques = [self.parse_que_frm_db(que) for que in ques]
         ques = [q for q in ques if not q['image_exist']]
 
-        ques_db = pd.DataFrame(ques)
-        ques_db['created_at'] = pd.to_datetime(ques_db['created_at'])
-        time_stamp = datetime.strptime('2022-09-22', '%Y-%m-%d')
+        sorted_list = sorted(ques, key= lambda x: datetime.strptime(x['created_at'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
+        time_stamp = datetime.strptime(self.start_date, '%Y-%m-%d')
         ndays = (datetime.now() - time_stamp).days 
         remainder = len(ques) % ndays 
+        question = sorted_list[remainder]
 
-        ques_db.sort_values(by='created_at', ascending=True, inplace=True)
-        question = ques_db.iloc[remainder, :]
-
-        return question.to_dict()
-
+        return question

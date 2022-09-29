@@ -1,0 +1,6 @@
+Pillow==9.2.0
+chardet==4.0.0
+chromedriver-binary==2.37.0
+selenium==3.141.0
+tweepy==4.10.0
+git+https://github.com/saralio/saral-utils.git@develop
