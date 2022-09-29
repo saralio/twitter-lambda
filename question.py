@@ -81,7 +81,7 @@ class Question:
         sorted_list = sorted(ques, key= lambda x: datetime.strptime(x['created_at'], '%Y-%m-%dT%H:%M:%S.%f'), reverse=True)
         time_stamp = datetime.strptime(self.start_date, '%Y-%m-%d')
         ndays = (datetime.now() - time_stamp).days 
-        remainder = len(ques) % ndays 
+        remainder = ndays % len(ques)
         question = sorted_list[remainder]
 
         return question
