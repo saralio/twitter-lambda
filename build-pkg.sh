@@ -1,6 +1,6 @@
 #!/bin/sh
-rm -r pkg
-rm build.zip
+rm -rf pkg
+rm -f build.zip
 mkdir pkg
 cp -r bin lib handler.py question.py utils.py requirements.txt pkg/
 # cp -r handler.py question.py utils.py requirements.txt pkg/
@@ -13,5 +13,5 @@ du -hs --apparent-size .
 zip -9qr build.zip .
 cd ..
 cp pkg/build.zip .
-rm -r pkg
+rm -rf pkg
 du -hs --apparent-size build.zip
