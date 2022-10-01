@@ -86,8 +86,11 @@ def hello(event, context):
                     'sno': str(sno)
                 }
             )
-
-    tweets_to_post = text_to_tweets(text=text_wo_code, hashtags=['RStats', 'DataScience'] )
+    
+    if trigger.lower().strip() == 'r':
+        tweets_to_post = text_to_tweets(text=text_wo_code, hashtags=['RStats', 'DataScience'] )
+    elif trigger.lower().strip() == 'python':
+        tweets_to_post = text_to_tweets(text=text_wo_code, hashtags=['Python', 'Programming'] )
 
     code_media_count = len(code_media_ids)
     que_id = unique_question['question_id']

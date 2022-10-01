@@ -3,7 +3,6 @@ rm -rf pkg
 rm -f build.zip
 mkdir pkg
 cp -r bin lib handler.py question.py utils.py requirements.txt pkg/
-# cp -r handler.py question.py utils.py requirements.txt pkg/
 cd pkg
 cd lib 
 apt download libglib2.0-0 libnss3 libgconf-2-4 libfontconfig1
