@@ -188,7 +188,7 @@ def hello(event, context):
 
     answer_link = create_env_api_url(url=f'answer.saral.club/qna/{que_id}')
     subscribe_link = create_env_api_url(url=f'saral.club')
-    option_tweets_to_post = [f"Options:\n(Answer at: {answer_link}\n\nSubscribe at {subscribe_link} to get a daily question on #RStats in your inbox."]
+    option_tweets_to_post = [f"Options:\n(Answer at: {answer_link}\nSignup for more ques at {subscribe_link})\n"]
     for opt in options_text:
         text = option_tweets_to_post[-1]
         if len("".join([text, opt])) <= 280:
