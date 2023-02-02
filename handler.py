@@ -186,7 +186,7 @@ def hello(event, context):
         option_text = str(i+1) + ". " + option['text'] + "\n"
         options_text.append(option_text)
 
-    answer_link = create_env_api_url(url=f'answer.saral.club/qna/{que_id}')
+    answer_link = create_env_api_url(url=f'saral.club/qna?id={que_id}&lang=r')
     subscribe_link = create_env_api_url(url=f'saral.club')
     option_tweets_to_post = [f"Options:\n(Answer at: {answer_link}\nSignup for more ques at {subscribe_link})\n"]
     for opt in options_text:
