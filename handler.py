@@ -188,7 +188,7 @@ def hello(event, context):
 
     answer_link = create_env_api_url(url=f'saral.club/qna?id={que_id}&lang=r')
     subscribe_link = create_env_api_url(url=f'saral.club')
-    option_tweets_to_post = [f"Options:\n(Answer at: {answer_link}\nSignup for more ques at {subscribe_link})\n"]
+    option_tweets_to_post = [f"Options:\n"]
     for opt in options_text:
         text = option_tweets_to_post[-1]
         if len("".join([text, opt])) <= 280:
@@ -207,5 +207,18 @@ def hello(event, context):
         )
         reply_id = tweet.data['id']
 
+    # post answer link tweet
+    tweet = twitter.create_tweet(
+        text=f'Check the answer at: {answer_link}'
+        in_reply_to_tweet_id=reply_id
+    )
+    reply_id = tweet.data['id']
 
+    # post subscribe link
+    tweet = twitter.create_tweet(
+        text=f'Sharpen your programming skills with a question a day. {subscribe_link}',
+        in_reply_to_tweet_id=reply_id
+    )
+    reply_id = tweet.data['id']
+    
     print(f'all tweets tweeted. question id: {que_id}. Last tweet id: {reply_id}')
