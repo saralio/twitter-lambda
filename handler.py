@@ -209,7 +209,7 @@ def hello(event, context):
 
     # post answer link tweet
     tweet = twitter.create_tweet(
-        text=f'Check the answer at: {answer_link}'
+        text=f'Check the answer at: {answer_link}',
         in_reply_to_tweet_id=reply_id
     )
     reply_id = tweet.data['id']
