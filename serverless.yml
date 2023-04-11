@@ -25,14 +25,14 @@ functions:
     events: 
       - schedule:
           rate: cron(30 16 * * ? *)
-          name: python-send-question
-          description: "send python question daily at 2pm utc or 9am us time"
+          name: twitter-post-python
+          description: "post python question on twitter" 
           input:
             language: python
       - schedule:
           rate: cron(30 12 * * ? *)
-          name: r-send-question-2
-          description: "send r question daily at 3am utc or 10pm us time or 8:30 am ist"
+          name: twitter-post-r
+          description: "post r question on twitter"
           input:
             language: r
       - schedule: cron(30 12 * * ? *)
