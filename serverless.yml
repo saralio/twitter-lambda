@@ -31,7 +31,7 @@ functions:
             language: python
       - schedule:
           rate: cron(30 12 * * ? *)
-          name: r-send-question
+          name: r-send-question-2
           description: "send r question daily at 3am utc or 10pm us time or 8:30 am ist"
           input:
             language: r
