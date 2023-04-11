@@ -36,7 +36,6 @@ functions:
           input:
             language: r
       - schedule: cron(30 12 * * ? *)
-      - 
 
     maximumRetryAttempts: 1
     memorySize: 512
