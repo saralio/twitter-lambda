@@ -185,8 +185,9 @@ def hello(event, context):
     for i, option in enumerate(options):
         option_text = str(i+1) + ". " + option['text'] + "\n"
         options_text.append(option_text)
-
-    answer_link = create_env_api_url(url=f'saral.club/qna?id={que_id}&lang=r')
+    
+    lang = trigger.lower().strip()
+    answer_link = create_env_api_url(url=f'saral.club/qna?id={que_id}&lang={lang}')
     subscribe_link = create_env_api_url(url=f'saral.club')
     option_tweets_to_post = [f"Options:\n"]
     for opt in options_text:
